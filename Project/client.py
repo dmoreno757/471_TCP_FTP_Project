@@ -19,16 +19,16 @@ if len(sys.argv) < 3:
 
 # Store the arguments in variables
 serv_name = sys.argv[1]
-serv_port = sys.argv[2]
+serv_port =int(sys.argv[2])
 
 # Get and store the IP address of the domain name
 serv_IP = socket.gethostbyname(serv_name)
 
 ctrl_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ctrl_channel.connect((serv_IP, int(serv_port)))
+ctrl_channel.connect((serv_IP, serv_port))
 
 # This is just to make sure stuff is working right, DELETE AT END
-print(serv_name + " " + serv_port)
+print(serv_name, serv_port)
 print(serv_IP)
 
 # control channel is client to server connection for getting commands. Terminate at end/ quit command
@@ -41,38 +41,38 @@ print(serv_IP)
 # Note: server has terminated NEW connection, NOT existing one for listening to client commands
 
 while True:
+    # Get input from the user
+    line = raw_input("ftp> ")
+    print(line)
+
+    # Split the input into the command + arguments(if any)
+    client_args = line.split()
+
+    # First check if ls,get,or put commands to generate an ephemeral port for transfer 
+    if (client_args[0] == 'ls' or client_args[0] == 'get' or client_args[0] == 'put'):
+        # Create a socket used for data transfer
+        data_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # Bind the socket to port 0 and listen for response
+        data_channel.bind(('',0))
+
+        '''INSERT CODE FOR SENDING COMMANDS/DATA TO SERVER HERE'''
+        
+        data_channel.listen(1)
+            while True:
+                '''INSERT CODE FOR RETRIEVING DATA FROM SERVER HERE'''
+                    '''Somehow detect its done sending in which case, break'''
+                break
+        data_channel.close()
+    else:
+        # Send client input to server
+        '''INSERT CODE FOR SENDING COMMANDS/DATA TO SERVER HERE'''
+
+        # If command is quit, prepare to close connection
+        if (client_args[0] == 'quit'):
+            # Prepare to close connection
+            break
     
-    # FIGURE OUT HOW TO GET SEPARATE ARGUMENTS FROM USER, MAKE SURE ITS VALID, AND SEND
-
-    #command = str(input("ftp>
-
-
-
-    # if client_command == 'ls' OR client_command == 'get' OR client_command == 'put':
-    # then use this code
-    '''# Create a socket
-data_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Bind the socket to port ??? .... I THINK PORT NUMBER IS BEING PASSED BY CLIENT HERE SO ITS GIVEN
-data_channel.bind(('',given_port))
-
-# Retreive the ephemeral port number
-print "I chose ephemeral port: ", data_channel.getsockname()[1]'''
-    
-    # if command == 'ls -l':
-    '''
-import subprocess
-
-# Run ls command, get output, and print it
-subprocess.call('dir', shell=True)
-
-#if we can somehow detect linux system, do this command
-#subprocess.call(['ls', '-l'], shell=True)'''
-    
-# PSUEDOCODE
-#   If command == 'quit':
-#                         break
-
-# ctrl_channel.close()
-
 time.sleep(4.5)
+# End client
+ctrl_channel.close()
