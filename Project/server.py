@@ -5,11 +5,19 @@
 #
 
 import socket
+import os
+import sys
+import subprocess
 import time
 
-
+# Print usage if user has incorrect number of arguments given and exit
+if len(sys.argv) < 1:
+    print("ERROR! Invalid # of arguments given. See sample input below:")
+    print("python client.py" +  "<port number>")
+    sys.exit(1)
+    
 # Port for control channel
-ctrl_port = 1234
+ctrl_port = int(sys.argv[1])
 
 # Bind and listen to port
 ctrl_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,9 +39,49 @@ while True:
     # Accept commands at this connection
     command_sock, command_addr = ctrl_channel.accept()
 
-    print("Accepted connection from client: ", addr)
+    print("Accepted connection from client: ", command_addr)
     
-    time.sleep(4.5)
+    ''' INSERT CODE TO RETRIEVE COMMANDS/DATA FROM CLIENT HERE'''
+    
+    # If the client input a command and argument, then determine if get or put
+    if (len(client_args) == 2):
+        if(client_args[0] == 'get'):
+            # Connect to ephemeral port for data transfer
+            data_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            data_channel.connect(('',0))
+            
+            print("get check works")
+        elif(client_args[0] == 'put'):
+            # Connect to ephemeral port for data transfer
+            data_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            data_channel.connect(('',0))
+            
+            print("put check works")
+        else:
+            print("ERROR! Invalid input given.")
+            print("Usage: get <filename> OR put <filename>")
 
-    # Close server side of connection
-    command_sock.close()
+    # Else if the client input only a command, then determine if ls or quit
+    elif (len(client_args) == 1):
+        if(client_args[0] == 'ls'):
+            # Connect to ephemeral port for data transfer
+            data_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            data_channel.connect(('',0))
+
+            # Run ls-equivalent command for Windows
+            if os.name == 'nt':
+                subprocess.call('dir', shell=True) # SOMEHOW NEED TO STORE THIS IN A STRING TO PASS TO CLIENT
+            # Else run ls -l for Linux
+            elif os.name == 'posix':
+                subprocess.call(['ls', '-l'], shell=True) # SOMEHOW NEED TO STORE THIS IN A STRING TO PASS TO CLIENT
+        elif (client_args[0] == 'quit'):
+            # Close server side of connection
+            command_sock.close()
+            break
+        else:
+            print("ERROR! Invalid input given.")
+            print("Usage: ls OR quit")
+            
+time.sleep(4.5)
+# End server
+ctrl_channel.close()
