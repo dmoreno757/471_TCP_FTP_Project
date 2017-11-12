@@ -45,6 +45,20 @@ while True:
     # FIGURE OUT HOW TO GET SEPARATE ARGUMENTS FROM USER, MAKE SURE ITS VALID, AND SEND
 
     #command = str(input("ftp>
+
+
+
+    # if client_command == 'ls' OR client_command == 'get' OR client_command == 'put':
+    # then use this code
+    '''# Create a socket
+data_channel = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Bind the socket to port ??? .... I THINK PORT NUMBER IS BEING PASSED BY CLIENT HERE SO ITS GIVEN
+data_channel.bind(('',given_port))
+
+# Retreive the ephemeral port number
+print "I chose ephemeral port: ", data_channel.getsockname()[1]'''
+    
     # if command == 'ls -l':
     '''
 import subprocess
