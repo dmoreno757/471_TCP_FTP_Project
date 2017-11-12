@@ -74,6 +74,11 @@ while True:
             # Else run ls -l for Linux
             elif os.name == 'posix':
                 subprocess.call(['ls', '-l'], shell=True) # SOMEHOW NEED TO STORE THIS IN A STRING TO PASS TO CLIENT
+                
+            '''INSERT CODE TO SEND DATA TO CLIENT'''
+            
+            # Close data channel connection
+            data_channel.close()
         elif (client_args[0] == 'quit'):
             # Close server side of connection
             command_sock.close()
